@@ -791,7 +791,7 @@ public class MusicService extends Service {
         }
     }
 
-    private void addToPlayList(final long[] list, int position, long sourceId, TimberUtils.IdType sourceType) {
+    private void addToPlayList(final long[] list, int position, Source source) {
         final int addlen = list.length;
         if (position < 0) {
             mPlaylist.clear();
@@ -805,7 +805,7 @@ public class MusicService extends Service {
 
         final ArrayList<MusicPlaybackTrack> arrayList = new ArrayList<MusicPlaybackTrack>(addlen);
         for (int i = 0; i < list.length; i++) {
-            arrayList.add(new MusicPlaybackTrack(list[i], sourceId, sourceType, i));
+            arrayList.add(new MusicPlaybackTrack(list[i], source.id, source.type, i));
         }
 
         mPlaylist.addAll(position, arrayList);
@@ -1946,7 +1946,7 @@ public class MusicService extends Service {
                 }
             }
             if (newlist) {
-                addToPlayList(list, -1, sourceId, sourceType);
+                addToPlayList(list, -1, new Source(sourceId, sourceType));
                 notifyChange(QUEUE_CHANGED);
             }
             if (position >= 0) {
@@ -2188,11 +2188,11 @@ public class MusicService extends Service {
     public void enqueue(final long[] list, final int action, long sourceId, IdType sourceType) {
         synchronized (this) {
             if (action == NEXT && mPlayPos + 1 < mPlaylist.size()) {
-                addToPlayList(list, mPlayPos + 1, sourceId, sourceType);
+                addToPlayList(list, mPlayPos + 1, new Source(sourceId, sourceType));
                 mNextPlayPos = mPlayPos + 1;
                 notifyChange(QUEUE_CHANGED);
             } else {
-                addToPlayList(list, Integer.MAX_VALUE, sourceId, sourceType);
+                addToPlayList(list, Integer.MAX_VALUE, new Source(sourceId, sourceType));
                 notifyChange(QUEUE_CHANGED);
             }
 
