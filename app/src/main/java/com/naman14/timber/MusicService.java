@@ -791,24 +791,24 @@ public class MusicService extends Service {
         }
     }
 
-    private void addToPlayList(final long[] list, int position, long sourceId, TimberUtils.IdType sourceType) {
-        final int addlen = list.length;
-        if (position < 0) {
+    private void addToPlayList(PlaylistInfo playlistInfo, Source source) {
+        final int addlen = playlistInfo.list.length;
+        if (playlistInfo.position < 0) {
             mPlaylist.clear();
-            position = 0;
+            playlistInfo.position = 0;
         }
 
         mPlaylist.ensureCapacity(mPlaylist.size() + addlen);
-        if (position > mPlaylist.size()) {
-            position = mPlaylist.size();
+        if (playlistInfo.position > mPlaylist.size()) {
+            playlistInfo.position = mPlaylist.size();
         }
 
         final ArrayList<MusicPlaybackTrack> arrayList = new ArrayList<MusicPlaybackTrack>(addlen);
-        for (int i = 0; i < list.length; i++) {
-            arrayList.add(new MusicPlaybackTrack(list[i], sourceId, sourceType, i));
+        for (int i = 0; i < playlistInfo.list.length; i++) {
+            arrayList.add(new MusicPlaybackTrack(playlistInfo.list[i], source.id, source.type, i));
         }
 
-        mPlaylist.addAll(position, arrayList);
+        mPlaylist.addAll(playlistInfo.position, arrayList);
 
         if (mPlaylist.size() == 0) {
             closeCursor();
@@ -1946,7 +1946,7 @@ public class MusicService extends Service {
                 }
             }
             if (newlist) {
-                addToPlayList(list, -1, sourceId, sourceType);
+                addToPlayList(new PlaylistInfo(list, -1), new Source(sourceId, sourceType));
                 notifyChange(QUEUE_CHANGED);
             }
             if (position >= 0) {
@@ -2188,11 +2188,11 @@ public class MusicService extends Service {
     public void enqueue(final long[] list, final int action, long sourceId, IdType sourceType) {
         synchronized (this) {
             if (action == NEXT && mPlayPos + 1 < mPlaylist.size()) {
-                addToPlayList(list, mPlayPos + 1, sourceId, sourceType);
+                addToPlayList(new PlaylistInfo(list, mPlayPos + 1), new Source(sourceId, sourceType));
                 mNextPlayPos = mPlayPos + 1;
                 notifyChange(QUEUE_CHANGED);
             } else {
-                addToPlayList(list, Integer.MAX_VALUE, sourceId, sourceType);
+                addToPlayList(new PlaylistInfo(list, Integer.MAX_VALUE), new Source(sourceId, sourceType));
                 notifyChange(QUEUE_CHANGED);
             }
 
