@@ -3,35 +3,32 @@ package com.naman14.timber.timely.model;
 import com.naman14.timber.timely.model.number.*;
 
 import java.security.InvalidParameterException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class NumberUtils {
 
+    private static final Map<Integer, float[][]> numberMap = new HashMap<>();
+
+    static {
+        numberMap.put(-1, Null.getInstance().getControlPoints());
+        numberMap.put(0, Zero.getInstance().getControlPoints());
+        numberMap.put(1, One.getInstance().getControlPoints());
+        numberMap.put(2, Two.getInstance().getControlPoints());
+        numberMap.put(3, Three.getInstance().getControlPoints());
+        numberMap.put(4, Four.getInstance().getControlPoints());
+        numberMap.put(5, Five.getInstance().getControlPoints());
+        numberMap.put(6, Six.getInstance().getControlPoints());
+        numberMap.put(7, Seven.getInstance().getControlPoints());
+        numberMap.put(8, Eight.getInstance().getControlPoints());
+        numberMap.put(9, Nine.getInstance().getControlPoints());
+    }
+
     public static float[][] getControlPointsFor(int start) {
-        switch (start) {
-            case (-1):
-                return Null.getInstance().getControlPoints();
-            case 0:
-                return Zero.getInstance().getControlPoints();
-            case 1:
-                return One.getInstance().getControlPoints();
-            case 2:
-                return Two.getInstance().getControlPoints();
-            case 3:
-                return Three.getInstance().getControlPoints();
-            case 4:
-                return Four.getInstance().getControlPoints();
-            case 5:
-                return Five.getInstance().getControlPoints();
-            case 6:
-                return Six.getInstance().getControlPoints();
-            case 7:
-                return Seven.getInstance().getControlPoints();
-            case 8:
-                return Eight.getInstance().getControlPoints();
-            case 9:
-                return Nine.getInstance().getControlPoints();
-            default:
-                throw new InvalidParameterException("Unsupported number requested");
+        if (numberMap.containsKey(start)) {
+            return numberMap.get(start);
+        } else {
+            throw new InvalidParameterException("Unsupported number requested");
         }
     }
 }
